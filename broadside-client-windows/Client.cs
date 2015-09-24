@@ -13,38 +13,24 @@ namespace broadside_client_windows
     class Client
     {
         string hostName = "asukaserver.ddns.net";
-        TcpClient tcpClient;
-        Stream inputStream;
-        StreamWriter streamWriter;
-        StreamReader streamReader;
+        UdpClient udpClient;
 
-        public int Connect() {
-            Console.WriteLine("Attempting to connect to : " + hostName + ":19940");
-            tcpClient = new TcpClient(hostName, 19440);
-            Console.WriteLine("Connected!");
-            try { 
-                inputStream = tcpClient.GetStream();
-                streamWriter = new StreamWriter(inputStream);
-                streamReader = new StreamReader(inputStream);
-                streamWriter.AutoFlush = true;
-                return 0;
-            } catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-                return 1;
-            }
-        }
+        public void Connect() {
+            Console.WriteLine("Sending data to " + hostName + ":19440");
+            udpClient = new UdpClient(19440);
+            udpClient.Connect(hostName, 19440);
 
-        public void Receive()
-        {
-            Console.WriteLine("Receiving Data...");
-            string receivedData = streamReader.ReadLine();
-            Console.Write("Received! The time according to the server is: " + receivedData);
-            Console.ReadLine();
-        }
+            Byte[] sendBytes = Encoding.ASCII.GetBytes("Now you see me, now I'm gay.");
 
-        public void Disconnect()
-        {
-            inputStream.Close();
+            udpClient.Send(sendBytes, sendBytes.Length);
+
+            IPEndPoint RemoteIpEndPoint = new IPEndPoint(Dns.GetHostAddresses(hostName)[0], 19440);
+
+            Byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+            string returnData = Encoding.ASCII.GetString(receiveBytes);
+            Console.WriteLine("Received message: " + returnData.ToString());
+
+            udpClient.Close();
         }
 
     }
