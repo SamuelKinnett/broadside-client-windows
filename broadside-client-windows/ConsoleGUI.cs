@@ -23,12 +23,31 @@ namespace broadside_client_windows
         List<Element> screen;
 
         /// <summary>
-        /// Instantiates a new console GUI, creating a consoleRenderer and an array to hold the GUI elements
+        /// Instantiates a new console GUI, creating a consoleRenderer and an array to hold the GUI elements.
         /// </summary>
         public ConsoleGUI()
         {
             consoleRenderer = new ConsoleRenderer(Console.WindowWidth, Console.WindowHeight);
             screen = new List<Element>(); //This list contains every element to be drawn to the screen. Elements are rendered in the order they're added to the list.
+        }
+
+        /// <summary>
+        /// Draws all the elements to the screen.
+        /// </summary>
+        public void PaintScreen() 
+        {
+            foreach (Element currentElement in screen) {
+                currentElement.drawElement(consoleRenderer);
+            }
+            consoleRenderer.Paint();
+        }
+
+        /// <summary>
+        /// Adds an element to the screen
+        /// </summary>
+        public void AddElement(Element newElement)
+        {
+            screen.Add(newElement);
         }
 
         /// <summary>
@@ -69,6 +88,9 @@ namespace broadside_client_windows
 
                 bufferSize = height;
                 buffer = new string[bufferSize];
+                //fill the buffer with blank strings
+                for (int i = 0; i < bufferSize; i++)
+                    buffer[i] = "";
             }
 
             public void WriteLine(string lineToWrite)
@@ -106,7 +128,7 @@ namespace broadside_client_windows
                         //For each line, calculate how many lines it will take up in the logbox.
                         int numberOfLines = (int)Math.Ceiling((double)buffer[currentString].Length / (double)charsPerLine);
 
-                        if (numberOfLines == 1) {
+                        if (numberOfLines < 2) {
                             //We only need to write one line; simple!
                             consoleRenderer.WriteString(tempX, tempY + linesRemaining, buffer[currentString]);
                             linesRemaining--;
@@ -121,7 +143,7 @@ namespace broadside_client_windows
                             substringArray[numberOfLines - 1] = buffer[currentString].Substring((numberOfLines - 1) * charsPerLine);    //The last substring must go to the end of the string.
 
                             //Now, add each substring to the buffer and update the linesRemaining variable.
-                            for (int c = numberOfLines - 1; c >= 0; c++) {
+                            for (int c = numberOfLines - 1; c >= 0; c--) {
                                 consoleRenderer.WriteString(tempX, tempY + linesRemaining, substringArray[c]);
                                 linesRemaining--;
                             }

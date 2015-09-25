@@ -24,7 +24,7 @@ namespace broadside_client_windows
             for (int i = 0; i < blankArray.Length; i++) {
                 blankArray[i] = ' ';
             } */
-            stdout = new StreamWriter(Console.OpenStandardOutput());
+            stdout = new StreamWriter(Console.OpenStandardOutput(), System.Text.Encoding.Default);
         }
 
         /// <summary>
@@ -93,18 +93,18 @@ namespace broadside_client_windows
             switch (border) {
                 case BorderStyles.oneLine:
                     //Place corners
-                    WriteChar(x, y, '┌');
-                    WriteChar(x + (width - 1), y, '┐');
-                    WriteChar(x + (width - 1), y + (height - 1), '┘');
-                    WriteChar(x, y + (height - 1), '└');
+                    WriteChar(x, y, (char)218);
+                    WriteChar(x + width, y, (char)191);
+                    WriteChar(x + width, y + height, (char)217);
+                    WriteChar(x, y + height, (char)192);
                     //Place edges
-                    for (int tempY = y; tempY < (height - 1); tempY++) {
-                        WriteChar(x, tempY, '│');
-                        WriteChar(x + (width - 1), tempY, '│');
+                    for (int tempY = y + 1; tempY < height; tempY++) {
+                        WriteChar(x, tempY, (char)179);
+                        WriteChar(x + width, tempY, (char)179);
                     }
-                    for (int tempX = x; tempX < (width - 1); tempX++) {
-                        WriteChar(tempX, y, '─');
-                        WriteChar(tempX, y + (height - 1), '─');
+                    for (int tempX = x + 1; tempX < width; tempX++) {
+                        WriteChar(tempX, y, (char)196);
+                        WriteChar(tempX, y + height, (char)196);
                     }
                     break;
 

@@ -14,6 +14,7 @@ namespace broadside_client_windows
     {
         string hostName = "asukaserver.ddns.net";
         UdpClient udpClient;
+        ConsoleGUI GUI = new ConsoleGUI();
 
         public void Connect() {
             Console.WriteLine("Sending data to " + hostName + ":19440");
@@ -31,6 +32,20 @@ namespace broadside_client_windows
             Console.WriteLine("Received message: " + returnData.ToString());
 
             udpClient.Close();
+        }
+
+        public void TestGUI()
+        {
+            ConsoleGUI.LogBox console = new ConsoleGUI.LogBox(1, 1, 50, 30, BorderStyles.oneLine);
+
+            GUI.AddElement(console);
+
+            console.WriteLine("Top Lek");
+            console.WriteLine("Wew Lad");
+            console.WriteLine("What the fuck did you just say about me you little shit? I'll have you know I graduated top of my class in the US navy SEALS.");
+
+            GUI.PaintScreen();
+            Console.ReadLine();
         }
 
     }

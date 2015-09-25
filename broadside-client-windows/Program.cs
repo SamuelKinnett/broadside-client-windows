@@ -11,11 +11,13 @@ namespace broadside_client_windows
         static void Main(string[] args)
         {
             Client client = new Client();
+            client.TestGUI();
+            /*
             do
             {
                 client.Connect();
             } while (Console.ReadLine().ToUpper() != "Q");
-            
+            */
         }
     }
 }
