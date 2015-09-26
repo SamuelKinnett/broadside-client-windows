@@ -25,6 +25,7 @@ namespace broadside_client_windows
                 blankArray[i] = ' ';
             } */
             stdout = new StreamWriter(Console.OpenStandardOutput(), System.Text.Encoding.Default);
+            stdout.AutoFlush = true;
         }
 
         /// <summary>
@@ -94,17 +95,17 @@ namespace broadside_client_windows
                 case BorderStyles.oneLine:
                     //Place corners
                     WriteChar(x, y, (char)218);
-                    WriteChar(x + width, y, (char)191);
-                    WriteChar(x + width, y + height, (char)217);
-                    WriteChar(x, y + height, (char)192);
+                    WriteChar(x + (width - 1), y, (char)191);
+                    WriteChar(x + (width - 1), y + (height - 1), (char)217);
+                    WriteChar(x, y + (height - 1), (char)192);
                     //Place edges
                     for (int tempY = y + 1; tempY < height; tempY++) {
                         WriteChar(x, tempY, (char)179);
-                        WriteChar(x + width, tempY, (char)179);
+                        WriteChar(x + (width - 1), tempY, (char)179);
                     }
                     for (int tempX = x + 1; tempX < width; tempX++) {
                         WriteChar(tempX, y, (char)196);
-                        WriteChar(tempX, y + height, (char)196);
+                        WriteChar(tempX, y + (height - 1), (char)196);
                     }
                     break;
 

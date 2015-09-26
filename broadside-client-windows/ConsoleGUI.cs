@@ -130,7 +130,7 @@ namespace broadside_client_windows
 
                         if (numberOfLines < 2) {
                             //We only need to write one line; simple!
-                            consoleRenderer.WriteString(tempX, tempY + linesRemaining, buffer[currentString]);
+                            consoleRenderer.WriteString(tempX, tempY + (linesRemaining - 1), buffer[currentString]);
                             linesRemaining--;
                         }
                         else {
@@ -144,8 +144,10 @@ namespace broadside_client_windows
 
                             //Now, add each substring to the buffer and update the linesRemaining variable.
                             for (int c = numberOfLines - 1; c >= 0; c--) {
-                                consoleRenderer.WriteString(tempX, tempY + linesRemaining, substringArray[c]);
-                                linesRemaining--;
+                                if (linesRemaining > 0) {
+                                    consoleRenderer.WriteString(tempX, tempY + (linesRemaining - 1), substringArray[c]);
+                                    linesRemaining--;
+                                }
                             }
                         }
                     }
