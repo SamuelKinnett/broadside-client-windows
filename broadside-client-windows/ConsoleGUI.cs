@@ -21,6 +21,8 @@ namespace broadside_client_windows
 
         ConsoleRenderer consoleRenderer;
         List<Element> screen;
+        int numberOfElements;
+        int activeElement;
 
         /// <summary>
         /// Instantiates a new console GUI, creating a consoleRenderer and an array to hold the GUI elements.
@@ -29,6 +31,8 @@ namespace broadside_client_windows
         {
             consoleRenderer = new ConsoleRenderer(Console.WindowWidth, Console.WindowHeight);
             screen = new List<Element>(); //This list contains every element to be drawn to the screen. Elements are rendered in the order they're added to the list.
+            numberOfElements = -1;
+            activeElement = -1;
         }
 
         /// <summary>
@@ -37,17 +41,26 @@ namespace broadside_client_windows
         public void PaintScreen() 
         {
             foreach (Element currentElement in screen) {
-                currentElement.drawElement(consoleRenderer);
+                currentElement.DrawElement(consoleRenderer);
             }
             consoleRenderer.Paint();
+        }
+
+        public string Interact()
+        {
+            return screen[activeElement].Interact();
         }
 
         /// <summary>
         /// Adds an element to the screen
         /// </summary>
-        public void AddElement(Element newElement)
+        public void AddElement(Element newElement, bool makeActive = false)
         {
             screen.Add(newElement);
+            numberOfElements++;
+            if (makeActive) {
+                activeElement = numberOfElements++;
+            }
         }
 
         /// <summary>
@@ -61,8 +74,9 @@ namespace broadside_client_windows
             public int height; //The height of the element in characters
             public BorderStyles border;    //The style of border of the element. Borders are always internal.
 
-            public abstract void drawElement(ConsoleRenderer consoleRenderer);
-            public abstract void deleteElement();
+            public abstract void DrawElement(ConsoleRenderer consoleRenderer);  //Called to draw the element to the buffer.
+            public abstract void DeleteElement();   //Called to remove the element when it is no longer needed.
+            public abstract string Interact();  //Called to interact with the element.
 
             internal Element()
             {
@@ -101,7 +115,7 @@ namespace broadside_client_windows
                 buffer = newBuffer; //Copy the temporary buffer into the buffer variable
             }
 
-            public override void drawElement(ConsoleRenderer consoleRenderer) 
+            public override void DrawElement(ConsoleRenderer consoleRenderer) 
             {
                 if (border == BorderStyles.none) {
                     //no border, just draw the log.
@@ -154,11 +168,17 @@ namespace broadside_client_windows
                 }
             }
 
-            public override void deleteElement()
+            public override void DeleteElement()
             {
-
+                throw new NotImplementedException();
             }
 
+            public override string Interact()
+            {
+                //Console.ReadLine();
+                System.Threading.Thread.Sleep(20);
+                return "";
+            }
         }
     }
 }

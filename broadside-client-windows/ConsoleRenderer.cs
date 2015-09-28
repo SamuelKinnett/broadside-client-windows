@@ -10,22 +10,20 @@ namespace broadside_client_windows
     public class ConsoleRenderer
     {
         char[] buffer;
-        //char[] blankArray;  //An array filled with spaces, used to clear the buffer.
+        char[] oldBuffer;   //The buffer rendered previously, used to only draw what is needed.
+        int[] colours;  //The colours of the buffer
         int bufferWidth;
         int bufferHeight;
-        private StreamWriter stdout;    //Used to write to the console using a stream to get the fastest write speed possible.
+        //private StreamWriter stdout;    //Used to write to the console using a stream to get the fastest write speed possible.
 
         public ConsoleRenderer(int bufferWidth, int bufferHeight)
         {
             this.bufferWidth = bufferWidth;
             this.bufferHeight = bufferHeight;
             buffer = new char[bufferWidth * bufferHeight];
-            /*blankArray = new char[bufferWidth * bufferHeight];
-            for (int i = 0; i < blankArray.Length; i++) {
-                blankArray[i] = ' ';
-            } */
-            stdout = new StreamWriter(Console.OpenStandardOutput(), System.Text.Encoding.Default);
-            stdout.AutoFlush = true;
+            oldBuffer = new char[bufferWidth * bufferHeight];
+            //stdout = new StreamWriter(Console.OpenStandardOutput(), System.Text.Encoding.Default);
+            //stdout.AutoFlush = false;
         }
 
         /// <summary>
@@ -33,6 +31,7 @@ namespace broadside_client_windows
         /// </summary>
         private void ClearBuffer()
         {
+            Array.Copy(buffer, oldBuffer, buffer.Length);
             Array.Clear(buffer, 0, buffer.Length);
         }
 
@@ -41,9 +40,26 @@ namespace broadside_client_windows
         /// </summary>
         private void DrawBuffer()
         {
+            /*
+            //Concatenate the buffer into one continuous string
+            string output = "";
             for (int i = 0; i < buffer.Length; i++) {
-                stdout.Write(buffer[i]);
+                output += buffer[i];
+                //stdout.Write(buffer[i]);
             }
+            stdout.Write(output);
+            stdout.Flush();
+             * */
+
+            for (int x = 0; x < bufferWidth; x++) {
+                for (int y = 0; y < bufferHeight; y++) {
+                    if (buffer[y * bufferWidth + x] != oldBuffer[y * bufferWidth + x]) {
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(buffer[y * bufferWidth + x]);
+                    }
+                }
+            }
+
         }
 
         /// <summary>
@@ -94,18 +110,18 @@ namespace broadside_client_windows
             switch (border) {
                 case BorderStyles.oneLine:
                     //Place corners
-                    WriteChar(x, y, (char)218);
-                    WriteChar(x + (width - 1), y, (char)191);
-                    WriteChar(x + (width - 1), y + (height - 1), (char)217);
-                    WriteChar(x, y + (height - 1), (char)192);
+                    WriteChar(x, y, '┌');
+                    WriteChar(x + (width - 1), y, '┐');
+                    WriteChar(x + (width - 1), y + (height - 1), '┘');
+                    WriteChar(x, y + (height - 1), '└');
                     //Place edges
-                    for (int tempY = y + 1; tempY < height; tempY++) {
-                        WriteChar(x, tempY, (char)179);
-                        WriteChar(x + (width - 1), tempY, (char)179);
+                    for (int tempY = y + 1; tempY < y + (height - 1); tempY++) {
+                        WriteChar(x, tempY, '│');
+                        WriteChar(x + (width - 1), tempY, '│');
                     }
-                    for (int tempX = x + 1; tempX < width; tempX++) {
-                        WriteChar(tempX, y, (char)196);
-                        WriteChar(tempX, y + (height - 1), (char)196);
+                    for (int tempX = x + 1; tempX < x + (width - 1); tempX++) {
+                        WriteChar(tempX, y, '─');
+                        WriteChar(tempX, y + (height - 1), '─');
                     }
                     break;
 
@@ -116,11 +132,11 @@ namespace broadside_client_windows
                     WriteChar(x + (width - 1), y + (height - 1), '╝');
                     WriteChar(x, y + (height - 1), '╚');
                     //Place edges
-                    for (int tempY = y; tempY < (height - 1); tempY++) {
+                    for (int tempY = y + 1; tempY < y + (height - 1); tempY++) {
                         WriteChar(x, tempY, '║');
                         WriteChar(x + (width - 1), tempY, '║');
                     }
-                    for (int tempX = x; tempX < (width - 1); tempX++) {
+                    for (int tempX = x + 1; tempX < x + (width - 1); tempX++) {
                         WriteChar(tempX, y, '═');
                         WriteChar(tempX, y + (height - 1), '═');
                     }
